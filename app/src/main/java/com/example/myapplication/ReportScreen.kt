@@ -13,17 +13,22 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.material3.Card
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.foundation.lazy.items
-
-
+import com.example.myapplication.Donation
+import com.example.myapplication.DonationViewModel
 
 // Tạo file ReportScreen.kt trong package hiện tại
 @Composable
-fun ReportScreen(viewModel: DonationViewModel = viewModel()) {
-    val donations = viewModel.donations  // ✅ Sử dụng trực tiếp danh sách từ ViewModel
+fun ReportScreen(viewModel: DonationViewModel) {
+    val donations by viewModel.donations.collectAsState()
 
     Column(modifier = Modifier.padding(16.dp)) {
-        Text("Donation Report", style = MaterialTheme.typography.headlineMedium)
+        Text(
+            text = "Donation Report",
+            style = MaterialTheme.typography.headlineMedium
+        )
         Spacer(modifier = Modifier.height(16.dp))
         LazyColumn {
             items(donations) { donation ->

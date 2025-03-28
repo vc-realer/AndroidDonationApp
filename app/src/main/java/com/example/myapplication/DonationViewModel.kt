@@ -2,20 +2,28 @@
 package com.example.myapplication
 
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
+
 
 class DonationViewModel : ViewModel() {
-    private val _donations = mutableStateListOf<Donation>()
-    val donations: List<Donation> get() = _donations
+    private val _donations = MutableStateFlow<List<Donation>>(emptyList())
+    val donations: StateFlow<List<Donation>> = _donations.asStateFlow()
 
     private val _totalDonated = MutableStateFlow(0)
     val totalDonated: StateFlow<Int> = _totalDonated.asStateFlow()
 
+    private val _target = 10000
+    val target: Int get() = _target
+
     fun addDonation(amount: Int, method: String) {
-        _donations.add(Donation(amount, method))
+        _donations.update { currentList ->
+            currentList + Donation(amount, method)
+        }
         _totalDonated.value += amount
     }
 }

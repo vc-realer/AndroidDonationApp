@@ -29,6 +29,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             MyApplicationTheme {
                 val navController = rememberNavController()
+                val donationViewModel: DonationViewModel = viewModel()
 
                 Scaffold(
                     modifier = Modifier.fillMaxSize(),
@@ -41,10 +42,10 @@ class MainActivity : ComponentActivity() {
                     )
                     {
                         composable("donate") {
-                            DonateScreen(navController, Modifier)
+                            DonateScreen(navController, Modifier,donationViewModel)
                         }
                         composable("report") {
-                            ReportScreen()
+                            ReportScreen(donationViewModel)
                         }
                     }
                 }
@@ -110,12 +111,14 @@ fun AppTopBar(
 fun DonateScreen(
     navController: NavHostController,
     modifier: Modifier = Modifier,
-    viewModel: DonationViewModel = viewModel()
+    viewModel: DonationViewModel
 ) {
 
     var selectedPayment by remember { mutableStateOf("PayPal") }
     var amount by remember { mutableIntStateOf(0) }
     val context = LocalContext.current
+
+    val totalDonated by viewModel.totalDonated.collectAsState()
 
     Scaffold(
         floatingActionButton = {
@@ -181,7 +184,7 @@ fun DonateScreen(
             // Progress Bar
             Spacer(modifier = Modifier.height(16.dp))
 
-            LinearProgressIndicator(progress = { viewModel.totalDonated.value / 1000f })
+            LinearProgressIndicator(progress = { totalDonated.toFloat() / viewModel.target })
 
             Spacer(modifier = Modifier.height(16.dp))
 
@@ -195,7 +198,7 @@ fun DonateScreen(
                         "Donated $amount via $selectedPayment!",
                         Toast.LENGTH_SHORT
                     ).show()
-                    navController.navigate("report")
+//                    navController.navigate("report")
                 }
             )
             {
