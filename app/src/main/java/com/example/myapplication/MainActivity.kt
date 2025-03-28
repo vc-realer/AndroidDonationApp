@@ -2,75 +2,127 @@ package com.example.myapplication
 
 
 import android.os.Bundle
-import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import com.example.myapplication.ui.theme.MyApplicationTheme
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-
+import androidx.lifecycle.viewmodel.compose.viewModel
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
         setContent {
             MyApplicationTheme {
+                val navController = rememberNavController()
+
                 Scaffold(
                     modifier = Modifier.fillMaxSize(),
-                    topBar = { AppTopBar() }) { innerPadding ->
-                    DonateScreen(
+                    topBar = { AppTopBar(navController = navController) }
+                ) { innerPadding ->
+                    NavHost(
+                        navController = navController,
+                        startDestination = "donate",
                         modifier = Modifier.padding(innerPadding)
                     )
+                    {
+                        composable("donate") {
+                            DonateScreen(navController, Modifier)
+                        }
+                        composable("report") {
+                            ReportScreen()
+                        }
+                    }
                 }
+
             }
+
         }
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AppTopBar() {
+fun AppTopBar(
+    navController: NavHostController
+) {
+    var showMenu by remember { mutableStateOf(false) }
     TopAppBar(
         title = { Text("Donate App") },
         actions = {
-            IconButton(
-                onClick = {
-                    Log.v("Donate", "Settings clicked")
-                }
-            ) {
-                Icon(Icons.Filled.Add, contentDescription = "Settings")
+            // Show Menu
+            IconButton(onClick = {showMenu=true}) {
+                Icon(imageVector = Icons.AutoMirrored.Filled.List, contentDescription = "Menu")
             }
+
+            //Dropdown Menu
+            DropdownMenu(
+                expanded = showMenu,
+                onDismissRequest = { showMenu = false }
+            ) {
+                //Menu Items
+
+                DropdownMenuItem(
+                    text = { Text("Donation") },
+                    onClick = {
+                        navController.navigate("donate") // Chuyển về màn hình Donate
+                        showMenu = false
+                    }
+                )
+
+                DropdownMenuItem(
+                    text = { Text("Report") },
+                    onClick = {
+                        navController.navigate("report")
+                        showMenu = false
+                    }
+                )
+
+                DropdownMenuItem(
+                    text = { Text("Settings") },
+                    onClick = {
+                        // TODO: Thêm chức năng Settings sau này
+                        showMenu = false
+                    }
+                )
+            }
+
         }
     )
 }
 
 
 @Composable
-fun DonateScreen(modifier: Modifier = Modifier) {
+fun DonateScreen(
+    navController: NavHostController,
+    modifier: Modifier = Modifier,
+    viewModel: DonationViewModel = viewModel()
+) {
 
     var selectedPayment by remember { mutableStateOf("PayPal") }
     var amount by remember { mutableIntStateOf(0) }
-    var totalDonated by remember { mutableIntStateOf(0) }
-    var context = LocalContext.current
+    val context = LocalContext.current
 
     Scaffold(
         floatingActionButton = {
             FloatingActionButton(
                 onClick = {
-                    Toast.makeText(context, "Replace with your own action", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, "Replace with your own action", Toast.LENGTH_SHORT)
+                        .show()
                 }
             ) {
                 Text("+")
@@ -129,18 +181,21 @@ fun DonateScreen(modifier: Modifier = Modifier) {
             // Progress Bar
             Spacer(modifier = Modifier.height(16.dp))
 
-
-            LinearProgressIndicator(progress = totalDonated / 1000f)
+            LinearProgressIndicator(progress = { viewModel.totalDonated.value / 1000f })
 
             Spacer(modifier = Modifier.height(16.dp))
 
             // Donate Button
             Button(
                 onClick = {
-                    totalDonated += amount
-                    Log.v("Donate", "Donate button clicked with $amount via $selectedPayment")
-                    Log.v("Donate", "Current total: ")
-                    Toast.makeText(context, "Donated $amount via $selectedPayment!", Toast.LENGTH_SHORT).show()
+                    viewModel.addDonation(amount, selectedPayment) //lưu donate vào viewmodel
+
+                    Toast.makeText(
+                        context,
+                        "Donated $amount via $selectedPayment!",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    navController.navigate("report")
                 }
             )
             {
@@ -151,10 +206,3 @@ fun DonateScreen(modifier: Modifier = Modifier) {
 
 }
 
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    MyApplicationTheme {
-        DonateScreen()
-    }
-}

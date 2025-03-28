@@ -3,4 +3,7 @@
     <string name="donateTitle">Welcome Homer</string>
     <string name="donateSubtitle">Please Give Generously</string>
     <string name="donateButton">Donate</string>
+    <string name="menu_report">Report</string>
+    <string name="donate_title">Welcome to Donation App</string>
+    <string name="donate_subtitle">Support our cause</string>
 </resources>
