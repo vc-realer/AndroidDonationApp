@@ -115,14 +115,20 @@ fun DonateScreen(
             // Donate Button
             Button(
                 onClick = {
-                    viewModel.addDonation(amount, selectedPayment) //lưu donate vào viewmodel
-
-                    Toast.makeText(
-                        context,
-                        "Donated $amount via $selectedPayment!",
-                        Toast.LENGTH_SHORT
-                    ).show()
-//                    navController.navigate("report")
+                    if (amount > 0) { // Prevents adding zero donations
+                        viewModel.addDonation(amount, selectedPayment)
+                        Toast.makeText(
+                            context,
+                            "Donated $amount via $selectedPayment!",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    } else {
+                        Toast.makeText(
+                            context,
+                            "Donation amount must be greater than 0!",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
                 }
             )
             {

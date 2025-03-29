@@ -1,8 +1,6 @@
 // DonationViewModel.kt
 package com.example.myapplication
 
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -21,10 +19,12 @@ class DonationViewModel : ViewModel() {
     val target: Int get() = _target
 
     fun addDonation(amount: Int, method: String) {
+
         _donations.update { currentList ->
             currentList + Donation(amount, method)
         }
         _totalDonated.value += amount
+
     }
 }
 
