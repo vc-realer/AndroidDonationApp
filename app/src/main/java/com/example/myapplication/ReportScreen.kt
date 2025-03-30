@@ -11,13 +11,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.material3.Card
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.foundation.lazy.items
-import com.example.myapplication.Donation
-import com.example.myapplication.DonationViewModel
 
 // Tạo file ReportScreen.kt trong package hiện tại
 @Composable
