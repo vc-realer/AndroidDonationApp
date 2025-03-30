@@ -108,7 +108,8 @@ fun DonateScreen(
             // Progress Bar
             Spacer(modifier = Modifier.height(16.dp))
 
-            LinearProgressIndicator(progress = { totalDonated.toFloat() / viewModel.target })
+            LinearProgressIndicator(progress = { (totalDonated.toFloat() / viewModel.target).coerceIn(0f, 1f) })
+
 
             Spacer(modifier = Modifier.height(16.dp))
 

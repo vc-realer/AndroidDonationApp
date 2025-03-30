@@ -20,11 +20,13 @@ class MainActivity : ComponentActivity() {
         setContent {
             MyApplicationTheme {
                 val navController = rememberNavController()
-                val donationViewModel: DonationViewModel = viewModel()
+                val donationViewModel: DonationViewModel = viewModel(
+                    factory = DonationViewModelFactory(application)
+                )
 
                 Scaffold(
                     modifier = Modifier.fillMaxSize(),
-                    topBar = { AppTopBar(navController = navController) }
+                    topBar = { AppTopBar(navController = navController, donationViewModel = donationViewModel) }
                 ) { innerPadding ->
                     NavHost(
                         navController = navController,

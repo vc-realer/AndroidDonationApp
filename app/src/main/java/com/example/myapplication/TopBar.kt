@@ -19,28 +19,26 @@ import androidx.navigation.NavHostController
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AppTopBar(
-    navController: NavHostController
+    navController: NavHostController,
+    donationViewModel: DonationViewModel // Pass ViewModel here
 ) {
     var showMenu by remember { mutableStateOf(false) }
+
     TopAppBar(
         title = { Text("Donate App") },
         actions = {
-            // Show Menu
-            IconButton(onClick = {showMenu=true}) {
+            IconButton(onClick = { showMenu = true }) {
                 Icon(imageVector = Icons.AutoMirrored.Filled.List, contentDescription = "Menu")
             }
 
-            //Dropdown Menu
             DropdownMenu(
                 expanded = showMenu,
                 onDismissRequest = { showMenu = false }
             ) {
-                //Menu Items
-
                 DropdownMenuItem(
                     text = { Text("Donation") },
                     onClick = {
-                        navController.navigate("donate") // Chuyển về màn hình Donate
+                        navController.navigate("donate")
                         showMenu = false
                     }
                 )
@@ -56,13 +54,19 @@ fun AppTopBar(
                 DropdownMenuItem(
                     text = { Text("Settings") },
                     onClick = {
-                        // TODO: Thêm chức năng Settings sau này
+                        // TODO: Implement Settings feature later
+                        showMenu = false
+                    }
+                )
+
+                DropdownMenuItem(
+                    text = { Text("Reset") },
+                    onClick = {
+                        donationViewModel.resetDonations() // Now it works!
                         showMenu = false
                     }
                 )
             }
-
         }
     )
 }
-
